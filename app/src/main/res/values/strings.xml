@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Blue Sea User</string>
+    <string name="signup">إنشاء حساب</string>
+    <string name="username">اسم المستخدم</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة السر</string>
+    <string name="have_an_account">لديك حساب؟</string>
+    <string name="log_in">تسجيل دخول</string>
+    <string name="date_sample">29 أبريل</string>
+    <string name="available_seats">مقاعد متوفرة</string>
+    <string name="booked">محجوز</string>
+    <string name="book">احجز</string>
+    <string name="trip_status">حالة الرحلة</string>
+    <string name="to_destination">إلى الوجهة</string>
+    <string name="locationPermission_needed">صلاحية الدخول للموقع مطلوبة</string>
+    <string name="captain_going_to_position">الكابتن متجه لميناء الانطلاق</string>
+    <string name="captain_going_to_destination">الكابتن متجه لميناء الوجهة</string>
+    <string name="captain_arrived">الرحلة وصلت</string>
+    <string name="ok">ok</string>
+    <string name="user_name_is_required">اسم المستخدم مطلوب</string>
+    <string name="email_is_needed">البريد الاكتروني مطلوب</string>
+    <string name="password_is_required">كلمة المرور مطلوبة</string>
+    <string name="password_must_be_6_digits_or_more">كلمة المرور يجب ان تكون من ٦ احرف او اكثر</string>
+    <string name="acconte_is_created">تم انشاء الحساب</string>
+    <string name="error">حدث خطا</string>
+    <string name="invalid_email">البريد الاكتروني غير صالح</string>
+    <string name="invalid_password_length">كلمة المرور يجب ان تكون اكبر ٦</string>
+    <string name="login_error">فشل في تسجيل الدخول</string>
+    <string name="photo_selected_error">خطآ في تحميل الصورة</string>
+    <string name="choose_photo">اختر صورة</string>
+    <string name="current_trip">Current Trip</string>
+    <string name="trip_list">Trip List</string>
+    <string name="photo_Selection_error">خطآ في تحميل الصورة</string>
+</resources>

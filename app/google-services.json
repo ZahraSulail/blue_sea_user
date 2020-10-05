@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "499267534464",
+    "firebase_url": "https://sea-journeys.firebaseio.com",
+    "project_id": "sea-journeys",
+    "storage_bucket": "sea-journeys.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499267534464:android:9792678f2721b6ed16b065",
+        "android_client_info": {
+          "package_name": "com.barmej.bluesea"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "499267534464-o1qu7uu3f1kfku7hdhl6lotsvksqpm7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGS6S4-qQg4caSUbYpzYmCvV3_74xuRh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "499267534464-o1qu7uu3f1kfku7hdhl6lotsvksqpm7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499267534464:android:6933541b2eed383f16b065",
+        "android_client_info": {
+          "package_name": "com.barmej.blueseacaptain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "499267534464-o1qu7uu3f1kfku7hdhl6lotsvksqpm7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGS6S4-qQg4caSUbYpzYmCvV3_74xuRh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "499267534464-o1qu7uu3f1kfku7hdhl6lotsvksqpm7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
