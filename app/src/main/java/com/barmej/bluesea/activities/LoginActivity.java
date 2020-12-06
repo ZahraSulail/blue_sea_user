@@ -52,16 +52,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void logInClicked() {
         if(!isValidEmail(emailEditText.getText())){
-            emailEditText.setText( R.string.invalid_email );
+            emailTextInputLayout.setError( getString( R.string.invalid_email));
             return;
         }
 
         if(passwordEditText.getText().length()< 6){
-            passwordEditText.setText( R.string.invalid_password_length);
+            passwordTextInputLayout.setError(getString( R.string.invalid_password_length ) );
             return;
 
         }else {
-            mAuth.getInstance()
+            FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword( emailEditText.getText().toString(), passwordEditText.getText().toString())
                     .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                         @Override

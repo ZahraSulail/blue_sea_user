@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private String id;
-
     private String assignedTrip;
-    private String name;
+    private String userName;
     private String photo;
+    private String email;
+    private String password;
+
 
     public User(String id){
         this.id = id;
@@ -35,12 +37,12 @@ public class User implements Serializable {
         this.assignedTrip = assignedTrip;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPhoto() {
@@ -51,6 +53,19 @@ public class User implements Serializable {
         this.photo = photo;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -1,11 +1,13 @@
 package com.barmej.bluesea.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.barmej.bluesea.R;
+import com.barmej.bluesea.activities.TripDetailsActivity;
 import com.barmej.bluesea.adapter.TripItemsAdapter;
 import com.barmej.bluesea.callback.OnTripClickListiner;
 import com.barmej.bluesea.domain.entity.Trip;
@@ -68,6 +70,8 @@ public class TripListFragment  extends Fragment implements OnTripClickListiner {
 
     @Override
     public void onTripClick(Trip trip) {
-
+        Intent intent = new Intent( getContext(), TripDetailsActivity.class );
+        intent.putExtra( TripDetailsActivity.TRIP_DATA, trip );
+        startActivity( intent );
     }
 }
