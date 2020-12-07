@@ -83,12 +83,12 @@ public class SignUpActivity extends AppCompatActivity {
         haveAccountButton = findViewById( R.id.button_have_account );
 
         mAuth = FirebaseAuth.getInstance();
-        requestExternalStoragePermission();
+
 
         uploadImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lanchGalleryIntent();
+                requestExternalStoragePermission();
             }
         } );
 
@@ -105,14 +105,13 @@ public class SignUpActivity extends AppCompatActivity {
                 email = emailTextInputEditText.getText().toString();
                 password = passwordTextInputEditText.getText().toString();
 
-
-                if (!isValidEmail( emailTextInputEditText.getText() )) {
-                    emailTextInputEditText.setText( R.string.invalid_email );
+                if (TextUtils.isEmpty( userName )) {
+                    userNameTextInputLayout.setError( getString( R.string.user_name_is_required ) );
                     return;
                 }
 
-                if (TextUtils.isEmpty( userName )) {
-                    userNameTextInputLayout.setError( getString( R.string.user_name_is_required ) );
+                if (!isValidEmail( emailTextInputEditText.getText() )) {
+                    emailTextInputLayout.setError(getText( R.string.invalid_email));
                     return;
                 }
 
@@ -160,7 +159,7 @@ public class SignUpActivity extends AppCompatActivity {
                            if(task.isSuccessful()){
                                final User user = new User();
                                user.setId( user.getId() );
-                               user.setUserName( userNameTextInputEditText.getText().toString()) ;
+                               user.setName( userNameTextInputEditText.getText().toString()) ;
                                user.setEmail( emailTextInputEditText.getText().toString());
                                user.setPassword( passwordTextInputEditText.getText().toString());
                                user.setAssignedTrip( user.getAssignedTrip());
@@ -195,6 +194,7 @@ public class SignUpActivity extends AppCompatActivity {
         mReadStoragePermissionGranted = false;
         if (ContextCompat.checkSelfPermission( getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED) {
             mReadStoragePermissionGranted = true;
+            lanchGalleryIntent();
         } else {
             ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_STORAGE );
         }

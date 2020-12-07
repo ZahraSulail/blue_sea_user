@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.fragments.TripListFragment;
-import com.barmej.bluesea.fragments.UserProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_user_profile) {
-            UserProfileFragment dialogFragment = new UserProfileFragment();
-            dialogFragment.show( getSupportFragmentManager(), "UserProfileFragment");
+           g
 
               return true;
         } else {

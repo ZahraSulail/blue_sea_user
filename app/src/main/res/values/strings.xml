@@ -40,5 +40,6 @@
     <string name="action_log_out">تسجيل خروج</string>
     <string name="failed_image_download">فشل في تحميل الصورة</string>
     <string name="image_is_required">الصورة مطلوبة</string>
+    <string name="log_in_successfull">تم تسجيل الدخول بنجاح</string>
 
 </resources>

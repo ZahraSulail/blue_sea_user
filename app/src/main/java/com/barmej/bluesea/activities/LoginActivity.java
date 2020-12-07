@@ -67,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                            if(task.isSuccessful()) {
+                               Toast.makeText( LoginActivity.this, R.string.log_in_successfull, Toast.LENGTH_SHORT ).show();
                                String userId = task.getResult().getUser().getUid();
-
                            }else{
                                Toast.makeText( LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG).show();
                            }
