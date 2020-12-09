@@ -23,6 +23,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -59,12 +60,13 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     private Uri mUserPhotoUri;
-
+    private FirebaseDatabase mDatabase;
     private DatabaseReference databaseReference;
     private static final String USERS = "users";
     String userName;
     String email;
     String password;
+    User user;
 
 
     @Override
@@ -83,8 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
         haveAccountButton = findViewById( R.id.button_have_account );
 
         mAuth = FirebaseAuth.getInstance();
-
-
+        mDatabase = FirebaseDatabase.getInstance();
         uploadImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +112,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 if (!isValidEmail( emailTextInputEditText.getText() )) {
-                    emailTextInputLayout.setError(getText( R.string.invalid_email));
+                    emailTextInputLayout.setError( getText( R.string.invalid_email ) );
                     return;
                 }
 
@@ -125,9 +126,10 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(mUserPhotoUri != null ){
+                if (mUserPhotoUri != null) {
                     createAccount();
-                }else{
+
+                } else {
                     Toast.makeText( SignUpActivity.this, R.string.image_is_required, Toast.LENGTH_SHORT ).show();
                 }
 
@@ -146,49 +148,26 @@ public class SignUpActivity extends AppCompatActivity {
     private void createAccount() {
 
 
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference storageReference = firebaseStorage.getReference();
-        final StorageReference photoStorageReference = storageReference.child( UUID.randomUUID().toString());
-        photoStorageReference.putFile( mUserPhotoUri ).addOnCompleteListener( new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        mAuth.createUserWithEmailAndPassword( email, password ).addOnCompleteListener( new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-               if(task.isSuccessful()){
-                   photoStorageReference.getDownloadUrl().addOnCompleteListener( new OnCompleteListener<Uri>() {
-                       @Override
-                       public void onComplete(@NonNull Task<Uri> task) {
-                           if(task.isSuccessful()){
-                               final User user = new User();
-                               user.setId( user.getId() );
-                               user.setName( userNameTextInputEditText.getText().toString()) ;
-                               user.setEmail( emailTextInputEditText.getText().toString());
-                               user.setPassword( passwordTextInputEditText.getText().toString());
-                               user.setAssignedTrip( user.getAssignedTrip());
-
-                               mAuth.createUserWithEmailAndPassword( email, password ).addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                                   @Override
-                                   public void onComplete(@NonNull Task<AuthResult> task) {
-                                       if (task.isSuccessful()) {
-                                           Toast.makeText( SignUpActivity.this, R.string.acconte_is_created, Toast.LENGTH_SHORT ).show();
-                                           startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
-                                           finish();
-                                       } else {
-                                           Toast.makeText( SignUpActivity.this, R.string.error, Toast.LENGTH_SHORT ).show();
-                                       }
-                                   }
-                               } );
-                           }
-                       }
-                   } );
-               }
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    sendUserInformationToFirebase();
+                    Toast.makeText( SignUpActivity.this, R.string.acconte_is_created, Toast.LENGTH_SHORT ).show();
+                    startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
+                    finish();
+                } else {
+                    Toast.makeText( SignUpActivity.this, R.string.error, Toast.LENGTH_SHORT ).show();
+                }
             }
         } );
     }
+
 
     public static boolean isValidEmail(CharSequence target) {
         return (!TextUtils.isEmpty( target ) && Patterns.EMAIL_ADDRESS.matcher( target ).matches());
 
     }
-
 
     private void requestExternalStoragePermission() {
         mReadStoragePermissionGranted = false;
@@ -198,8 +177,6 @@ public class SignUpActivity extends AppCompatActivity {
         } else {
             ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_STORAGE );
         }
-
-
     }
 
     @Override
@@ -235,5 +212,35 @@ public class SignUpActivity extends AppCompatActivity {
         intent.addCategory( Intent.CATEGORY_OPENABLE );
         intent.setType( "image/*" );
         startActivityForResult( Intent.createChooser( intent, getString( R.string.choose_photo ) ), REQUEST_GET_PHOTO );
+    }
+
+    private void sendUserInformationToFirebase() {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        StorageReference storageReference = firebaseStorage.getReference();
+        final StorageReference photoStorageReference = storageReference.child( UUID.randomUUID().toString() );
+        photoStorageReference.putFile( mUserPhotoUri ).addOnCompleteListener( new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    photoStorageReference.getDownloadUrl().addOnCompleteListener( new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                final User user = new User();
+                                user.setId( user.getId() );
+                                user.setName( userNameTextInputEditText.getText().toString() );
+                                user.setEmail( emailTextInputEditText.getText().toString() );
+                                user.setPassword( passwordTextInputEditText.getText().toString() );
+                                user.setAssignedTrip( user.getAssignedTrip() );
+                                mDatabase.getReference().child( "Users" ).push().setValue( user );
+
+                            }
+                        }
+                    } );
+
+                }
+            }
+        } );
+
     }
 }

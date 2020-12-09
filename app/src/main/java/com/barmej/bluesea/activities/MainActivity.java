@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_user_profile) {
-           g
-
+            Intent intent = new Intent( getApplicationContext(), UserProfileActivity.class );
+            startActivity( intent );
               return true;
         } else {
             if (id == R.id.action_log_out) {

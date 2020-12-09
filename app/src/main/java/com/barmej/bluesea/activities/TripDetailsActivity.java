@@ -109,28 +109,10 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                     .setPosition( currentLatLng);
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom( currentLatLng, 16 );
             googleMap.moveCamera( cameraUpdate );
-            return;
-        }
-        if(mTrip.getPositionLat() != 0 && mTrip.getPositionLatng() != 0){
-            LatLng positionLatLng = new LatLng( mTrip.getPositionLat(), mTrip.getPositionLatng());
-            googleMap.addMarker( new MarkerOptions() )
-                    .setPosition( positionLatLng );
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom( positionLatLng, 16 );
-            googleMap.moveCamera( cameraUpdate );
-
-            return;
-        }
-
-        if(mTrip.getDestinationLat() != 0 && mTrip.getDestinationLng() != 0){
-            LatLng destinationLatng = new LatLng( mTrip.getDestinationLat(), mTrip.getDestinationLng());
-            googleMap.addMarker( new MarkerOptions() )
-                    .setPosition(destinationLatng );
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom( destinationLatng, 16 );
-            googleMap.moveCamera( cameraUpdate );
 
         }
+
     }
-
     @Override
     public void onStart() {
         super.onStart();
