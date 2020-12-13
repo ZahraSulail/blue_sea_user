@@ -58,21 +58,21 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         }
 
 
-        if (mapView != null) {
-            mapView.onCreate( mapViewBundle );
-            mapView.getMapAsync( this );
-        }
 
-        if(getIntent() != null && getIntent().getExtras() != null){
-            Trip trip = (Trip) getIntent().getExtras().getSerializable( TRIP_DATA );
-            if(trip != null){
-                mDateTextView.setText( trip.getFormattedDate());
-                mPositionTextView.setText( trip.getPositionSeaPortName());
-                mDestinationTextView.setText( trip.getDestinationSeaportName());
-                mAvailableSeatsTextView.setText( String.valueOf( trip.getAvailableSeats()));
+
+
+           mTrip = (Trip) getIntent().getSerializableExtra( TRIP_DATA );
+            if(mTrip!= null){
+                mDateTextView.setText(  mTrip.getFormattedDate());
+                mPositionTextView.setText(  mTrip.getPositionSeaPortName());
+                mDestinationTextView.setText(  mTrip.getDestinationSeaportName());
+                mAvailableSeatsTextView.setText( String.valueOf(  mTrip.getAvailableSeats()));
 
             }
 
+        if (mapView != null) {
+            mapView.onCreate( mapViewBundle );
+            mapView.getMapAsync( this );
         }
 
         mBookButton.setOnClickListener( new View.OnClickListener() {

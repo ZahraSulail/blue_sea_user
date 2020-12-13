@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private MaterialButton loginButton;
-    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -40,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById( R.id.edit_text_password );
         loginButton = findViewById( R.id.button_login );
 
+
+
         loginButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +51,13 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         } );
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(firebaseUser != null){
+            fetchUserProfileAndLogin( firebaseUser.getUid());
+        }
     }
+
 
     private void logInClicked() {
         if(!isValidEmail(emailEditText.getText())){
@@ -58,10 +67,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if(passwordEditText.getText().length()< 6){
             passwordTextInputLayout.setError(getString( R.string.invalid_password_length ) );
-            return;
 
         }else {
-            FirebaseAuth.getInstance()
+           FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword( emailEditText.getText().toString(), passwordEditText.getText().toString())
                     .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                         @Override
@@ -69,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                            if(task.isSuccessful()) {
                                Toast.makeText( LoginActivity.this, R.string.log_in_successfull, Toast.LENGTH_SHORT ).show();
                                String userId = task.getResult().getUser().getUid();
+                               fetchUserProfileAndLogin( userId );
                            }else{
                                Toast.makeText( LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG).show();
                            }

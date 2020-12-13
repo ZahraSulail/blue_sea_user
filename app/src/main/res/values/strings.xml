@@ -41,5 +41,7 @@
     <string name="failed_image_download">فشل في تحميل الصورة</string>
     <string name="image_is_required">الصورة مطلوبة</string>
     <string name="log_in_successfull">تم تسجيل الدخول بنجاح</string>
+    <string name="user_info_added">تم اضافة معلومات المستخدم</string>
+    <string name="error_user_cannot_signUp">فشل في تسجيل مستخدم جديد</string>
 
 </resources>

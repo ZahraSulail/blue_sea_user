@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
@@ -60,9 +61,9 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     private Uri mUserPhotoUri;
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference databaseReference;
-    private static final String USERS = "users";
+
+
+
     String userName;
     String email;
     String password;
@@ -85,11 +86,13 @@ public class SignUpActivity extends AppCompatActivity {
         haveAccountButton = findViewById( R.id.button_have_account );
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
+
+        requestExternalStoragePermission();
         uploadImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestExternalStoragePermission();
+                lanchGalleryIntent();
+
             }
         } );
 
@@ -151,13 +154,16 @@ public class SignUpActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword( email, password ).addOnCompleteListener( new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
                 if (task.isSuccessful()) {
                     sendUserInformationToFirebase();
                     Toast.makeText( SignUpActivity.this, R.string.acconte_is_created, Toast.LENGTH_SHORT ).show();
                     startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
                     finish();
                 } else {
-                    Toast.makeText( SignUpActivity.this, R.string.error, Toast.LENGTH_SHORT ).show();
+
+                    Toast.makeText( SignUpActivity.this, R.string.error_user_cannot_signUp, Toast.LENGTH_SHORT ).show();
+                    Log.e(TAG, "onComplete: Failed=" + task.getException().getMessage());
                 }
             }
         } );
@@ -173,7 +179,7 @@ public class SignUpActivity extends AppCompatActivity {
         mReadStoragePermissionGranted = false;
         if (ContextCompat.checkSelfPermission( getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED) {
             mReadStoragePermissionGranted = true;
-            lanchGalleryIntent();
+            //lanchGalleryIntent();
         } else {
             ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_STORAGE );
         }
@@ -215,8 +221,10 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void sendUserInformationToFirebase() {
+        final DatabaseReference databaseReference =  FirebaseDatabase.getInstance().getReference();
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference storageReference = firebaseStorage.getReference();
+        final StorageReference storageReference = firebaseStorage.getReference();
+
         final StorageReference photoStorageReference = storageReference.child( UUID.randomUUID().toString() );
         photoStorageReference.putFile( mUserPhotoUri ).addOnCompleteListener( new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -231,9 +239,18 @@ public class SignUpActivity extends AppCompatActivity {
                                 user.setName( userNameTextInputEditText.getText().toString() );
                                 user.setEmail( emailTextInputEditText.getText().toString() );
                                 user.setPassword( passwordTextInputEditText.getText().toString() );
+                                user.setPhoto( task.getResult().toString());
                                 user.setAssignedTrip( user.getAssignedTrip() );
-                                mDatabase.getReference().child( "Users" ).push().setValue( user );
-
+                                databaseReference.child( "Users" ).child( mAuth.getCurrentUser().getUid() ).setValue( user ).addOnCompleteListener( new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText( SignUpActivity.this, R.string.user_info_added, Toast.LENGTH_SHORT ).show();
+                                        }else{
+                                            Toast.makeText( SignUpActivity.this, R.string.error_user_cannot_signUp, Toast.LENGTH_SHORT ).show();
+                                        }
+                                    }
+                                } );
                             }
                         }
                     } );
