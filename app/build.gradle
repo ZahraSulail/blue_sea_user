@@ -39,5 +39,8 @@ dependencies {
     // Find the latest Glide releases here: https://goo.gl/LpksbR
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation "androidx.multidex:multidex:$multidex_version"
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
 }
+
 apply plugin: 'com.google.gms.google-services'
