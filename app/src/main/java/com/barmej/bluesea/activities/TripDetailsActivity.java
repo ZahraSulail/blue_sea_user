@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.callback.BookTripInterface;
@@ -14,8 +13,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,9 +36,11 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
     private TextView mAvailableSeatsTextView;
     private Button mBookButton;
     private MapView mapView;
-
-    Bundle mapViewBundle;
-    Trip mTrip;
+    private GoogleMap mGoogleMap;
+    private Bundle mapViewBundle;
+    private Task<Void> databaseReference;
+    private Trip mTrip;
+    private int availableSeats;
 
     BookTripInterface bookTripInterface;
 
@@ -51,24 +56,24 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         mAvailableSeatsTextView = findViewById( R.id.det_text_available_seats );
         mBookButton = findViewById( R.id.button_book );
 
-        mapView = findViewById( R.id.map);
+        //databaseReference = FirebaseDatabase.getInstance().getReference().child( "Teip_Details" );
+        mTrip = new Trip();
+
+        mapView = findViewById( R.id.map );
         mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle( MAPVIEW_BUNDLE_KEY );
         }
 
 
+        mTrip = (Trip) getIntent().getSerializableExtra( TRIP_DATA );
+        if (mTrip != null) {
+            mDateTextView.setText( mTrip.getFormattedDate() );
+            mPositionTextView.setText( mTrip.getStartPortName() );
+            mDestinationTextView.setText( mTrip.getDestinationSeaportName() );
+            mAvailableSeatsTextView.setText( String.valueOf( mTrip.getAvailableSeats() ) );
 
-
-
-           mTrip = (Trip) getIntent().getSerializableExtra( TRIP_DATA );
-            if(mTrip!= null){
-                mDateTextView.setText(  mTrip.getFormattedDate());
-                mPositionTextView.setText(  mTrip.getPositionSeaPortName());
-                mDestinationTextView.setText(  mTrip.getDestinationSeaportName());
-                mAvailableSeatsTextView.setText( String.valueOf(  mTrip.getAvailableSeats()));
-
-            }
+        }
 
         if (mapView != null) {
             mapView.onCreate( mapViewBundle );
@@ -78,12 +83,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         mBookButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mTrip.getAvailableSeats() != 0) {
-                    bookTrip();
-                }else{
-                    Toast.makeText( TripDetailsActivity.this, R.string.no_available_seats_to_book, Toast.LENGTH_SHORT).show();
-                    finish();
-                }
+               bookTrip();
             }
         } );
     }
@@ -93,7 +93,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         super.onSaveInstanceState( outState );
         //Bundle to save state of the map
         mapViewBundle = outState.getBundle( MAPVIEW_BUNDLE_KEY );
-        if(mapViewBundle ==null){
+        if (mapViewBundle == null) {
             mapViewBundle = new Bundle();
             outState.putBundle( MAPVIEW_BUNDLE_KEY, mapViewBundle );
         }
@@ -102,17 +102,31 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        this.mGoogleMap = googleMap;
         if (mTrip.getCurrentLat() != 0 && mTrip.getCurrentLng() != 0) {
-            LatLng currentLatLng = new LatLng( mTrip.getCurrentLat(), mTrip.getCurrentLng());
-            googleMap.addMarker( new MarkerOptions() )
-                    .setPosition( currentLatLng);
+            LatLng currentLatLng = new LatLng( mTrip.getCurrentLat(), mTrip.getCurrentLng() );
+            googleMap.addMarker( new MarkerOptions().icon( BitmapDescriptorFactory.fromResource( R.drawable.boat ) ) )
+                    .setPosition( currentLatLng );
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom( currentLatLng, 16 );
             googleMap.moveCamera( cameraUpdate );
 
+
         }
 
+        if (mTrip.getStartLat() != 0 && mTrip.getStartLng() != 0) {
+            LatLng positionLatLng = new LatLng( mTrip.getStartLat(), mTrip.getStartLng() );
+            googleMap.addMarker( new MarkerOptions().position( positionLatLng ).icon( BitmapDescriptorFactory.fromResource( R.drawable.position ) ) );
+
+
+        }
+
+        if (mTrip.getDestinationLat() != 0 && mTrip.getDestinationLng() != 0) {
+
+            LatLng destinationLatng = new LatLng( mTrip.getDestinationLat(), mTrip.getDestinationLng() );
+            googleMap.addMarker( new MarkerOptions().position( destinationLatng ).icon( BitmapDescriptorFactory.fromResource( R.drawable.destination ) ) );
+        }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -143,16 +157,21 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         mapView.onDestroy();
     }
 
-    public void setTripActionsInterface( BookTripInterface bookTripInterface){
-        this.bookTripInterface = bookTripInterface;
-    }
+    public void bookTrip() {
+        availableSeats = mTrip.getAvailableSeats();
+        availableSeats = availableSeats - 1;
 
-    private void bookTrip(){
-        if(bookTripInterface != null){
-            bookTripInterface.bookTrip();
-        }
-        }
+        databaseReference = FirebaseDatabase.getInstance().getReference().child( "Trip_Details" ).child( "availableSeats" ).setValue( availableSeats ).addOnCompleteListener( new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    mAvailableSeatsTextView.setText( String.valueOf(availableSeats) );
+
+                }
+            }
+        } );
     }
+}
 
 
 

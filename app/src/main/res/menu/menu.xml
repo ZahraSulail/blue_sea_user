@@ -4,11 +4,13 @@
 
      <item android:id="@+id/action_user_profile"
          android:title="@string/user_profile"
-         app:showAsAction="never" />
+         android:icon="@drawable/ic_account"
+         app:showAsAction="ifRoom" />
 
      <item
          android:id="@+id/action_log_out"
+         android:icon="@drawable/ic_log_out"
          android:title="@string/action_log_out"
-         app:showAsAction="never" />
+         app:showAsAction="ifRoom" />
 
 </menu>

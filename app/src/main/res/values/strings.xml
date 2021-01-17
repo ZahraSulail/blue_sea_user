@@ -43,5 +43,10 @@
     <string name="log_in_successfull">تم تسجيل الدخول بنجاح</string>
     <string name="user_info_added">تم اضافة معلومات المستخدم</string>
     <string name="error_user_cannot_signUp">فشل في تسجيل مستخدم جديد</string>
+    <string name="user_email">الايميل</string>
+    <string name="phone_no">رقم الهاتف</string>
+    <string name="add_phone_no">"من فضلك ادخل رقم الهاتف "</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -98,7 +98,7 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
     }
 
     public void updateWithStatus(FullStatus status) {
-        positionTextView.setText( status.getTrip().getPositionSeaPortName() );
+        positionTextView.setText( status.getTrip().getStartPortName() );
         destinationTextView.setText( status.getTrip().getDestinationSeaportName() );
         toDestinationTextView.setText( status.getTrip().getDestinationSeaportName() );
         String tripStatus = status.getTrip().getStatus();
@@ -123,7 +123,7 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
         super.onSaveInstanceState( outState );
         //Bundle to save state of the map
         mapViewBundle = outState.getBundle( MAPVIEW_BUNDLE_KEY );
-        if(mapViewBundle ==null){
+        if (mapViewBundle == null) {
             mapViewBundle = new Bundle();
             outState.putBundle( MAPVIEW_BUNDLE_KEY, mapViewBundle );
         }
@@ -175,8 +175,8 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
         locationClient.getLastLocation().addOnSuccessListener( new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if(location != null){
-                    LatLng currentLatlng = new LatLng( location.getLatitude(), location.getLongitude());
+                if (location != null) {
+                    LatLng currentLatlng = new LatLng( location.getLatitude(), location.getLongitude() );
                     CameraUpdate update = CameraUpdateFactory.newLatLngZoom( currentLatlng, 16 );
                     mMap.moveCamera( update );
                 }
@@ -185,69 +185,73 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
 
     }
 
-    public void setDestinationMarker(LatLng target){
-        if(mMap != null) return;;
-        if(destinationMarker == null){
+    public void setDestinationMarker(LatLng target) {
+        if (mMap != null) return;
+        ;
+        if (destinationMarker == null) {
             BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource( R.drawable.destination );
             MarkerOptions options = new MarkerOptions();
             options.icon( descriptor );
-            options.position( target);
+            options.position( target );
             destinationMarker = mMap.addMarker( options );
-        }else {
+        } else {
             destinationMarker.setPosition( target );
         }
 
     }
 
-    public void setShipMarker(LatLng target){
-        if(mMap != null) return;;
-        if(shipMarker == null){
-            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource( R.drawable.boat);
+    public void setShipMarker(LatLng target) {
+        if (mMap != null) return;
+        ;
+        if (shipMarker == null) {
+            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource( R.drawable.boat );
             MarkerOptions options = new MarkerOptions();
             options.icon( descriptor );
-            options.position( target);
-            shipMarker= mMap.addMarker( options );
-        }else {
+            options.position( target );
+            shipMarker = mMap.addMarker( options );
+        } else {
             shipMarker.setPosition( target );
         }
     }
 
-    public void removeMapLocationLayout(){
-        if(ContextCompat.checkSelfPermission( getActivity(), Manifest.permission.ACCESS_FINE_LOCATION )
-                == PackageManager.PERMISSION_GRANTED){
+    public void removeMapLocationLayout() {
+        if (ContextCompat.checkSelfPermission( getActivity(), Manifest.permission.ACCESS_FINE_LOCATION )
+                == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled( false );
         }
     }
 
-    public LatLng captureCenter(){
-        if(mMap == null) return null;
+    public LatLng captureCenter() {
+        if (mMap == null) return null;
 
         return mMap.getCameraPosition().target;
     }
 
-    public void setPositionMarker(LatLng target){
-        if(mMap != null) return;;
-        if(positionMarker == null){
+    public void setPositionMarker(LatLng target) {
+        if (mMap != null) return;
+        ;
+        if (positionMarker == null) {
             BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource( R.drawable.position );
             MarkerOptions options = new MarkerOptions();
             options.icon( descriptor );
-            options.position( target);
+            options.position( target );
             positionMarker = mMap.addMarker( options );
-        }else {
+        } else {
             positionMarker.setPosition( target );
         }
     }
 
-    public void reset(){
-        if(mMap != null) return;;
+    public void reset() {
+        if (mMap != null) return;
+        ;
         mMap.clear();
-        positionMarker= null;
+        positionMarker = null;
         destinationMarker = null;
-        shipMarker= null;
+        shipMarker = null;
         setUpUserLocation();
     }
 
-    public void showTripCurrentLocationOnMap(LatLng tripLatng){
+    public void showTripCurrentLocationOnMap(LatLng tripLatng) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom( tripLatng, 16 );
         mMap.moveCamera( update );
 
@@ -255,8 +259,8 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-      mMap = googleMap;
-      checkLocationPermissinAndSetUpUserLocation();
+        mMap = googleMap;
+        checkLocationPermissinAndSetUpUserLocation();
     }
 
     @Override

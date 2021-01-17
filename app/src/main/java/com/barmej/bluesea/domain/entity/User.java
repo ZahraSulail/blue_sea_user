@@ -9,13 +9,14 @@ public class User implements Serializable {
     private String photo;
     private String email;
     private String password;
+    private String userPhoneNo;
 
 
-    public User(String id){
+    public User(String id) {
         this.id = id;
     }
 
-    public User(){
+    public User() {
 
     }
 
@@ -26,7 +27,6 @@ public class User implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-
 
 
     public String getAssignedTrip() {
@@ -67,5 +67,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUserPhoneNo() {
+        return userPhoneNo;
+    }
+
+    public void setUserPhoneNo(String userPhoneNo) {
+        this.userPhoneNo = userPhoneNo;
     }
 }

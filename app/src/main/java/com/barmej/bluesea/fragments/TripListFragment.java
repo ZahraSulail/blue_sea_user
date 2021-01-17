@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TripListFragment  extends Fragment implements OnTripClickListiner {
+public class TripListFragment extends Fragment implements OnTripClickListiner {
 
     private RecyclerView mRecyclerView;
     private TripItemsAdapter mAdapter;
@@ -42,18 +42,18 @@ public class TripListFragment  extends Fragment implements OnTripClickListiner {
         super.onViewCreated( view, savedInstanceState );
 
         mRecyclerView = view.findViewById( R.id.trip_list_recycler_view );
-        mRecyclerView.setLayoutManager( new LinearLayoutManager( getContext()));
+        mRecyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
         mTrips = new ArrayList<>();
         mAdapter = new TripItemsAdapter( mTrips, TripListFragment.this );
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter( mAdapter );
 
-        mRecyclerView.addItemDecoration( new DividerItemDecoration( getContext(), DividerItemDecoration.HORIZONTAL));
-        FirebaseDatabase.getInstance().getReference( "Trip_Details").addValueEventListener( new ValueEventListener() {
+        mRecyclerView.addItemDecoration( new DividerItemDecoration( getContext(), DividerItemDecoration.HORIZONTAL ) );
+        FirebaseDatabase.getInstance().getReference( "Trip_Details" ).addValueEventListener( new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        Trip trip = dataSnapshot.getValue(Trip.class);
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Trip trip = dataSnapshot.getValue( Trip.class );
                         mTrips.add( trip );
                     }
 

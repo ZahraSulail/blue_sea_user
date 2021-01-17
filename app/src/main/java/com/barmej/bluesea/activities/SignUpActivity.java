@@ -55,13 +55,14 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText userNameTextInputEditText;
     private TextInputEditText emailTextInputEditText;
     private TextInputEditText passwordTextInputEditText;
+    private TextInputLayout userPhoneNoTextInputLayout;
+    private TextInputEditText userPhoneNoInputEditText;
     private MaterialButton createAccountButton;
     private MaterialButton haveAccountButton;
 
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     private Uri mUserPhotoUri;
-
 
 
     String userName;
@@ -84,6 +85,8 @@ public class SignUpActivity extends AppCompatActivity {
         passwordTextInputEditText = findViewById( R.id.edit_text_password );
         createAccountButton = findViewById( R.id.button_create_account );
         haveAccountButton = findViewById( R.id.button_have_account );
+        userPhoneNoTextInputLayout = findViewById( R.id.text_input_user_phone_no );
+        userPhoneNoInputEditText = findViewById( R.id.edit_text_user_phone_no );
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -128,7 +131,10 @@ public class SignUpActivity extends AppCompatActivity {
                     passwordTextInputLayout.setError( getString( R.string.password_must_be_6_digits_or_more ) );
                     return;
                 }
-
+                if (TextUtils.isEmpty( userPhoneNoInputEditText.getText().toString() )) {
+                    userPhoneNoTextInputLayout.setError( getText( R.string.add_phone_no ) );
+                    return;
+                }
                 if (mUserPhotoUri != null) {
                     createAccount();
 
@@ -163,7 +169,7 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
 
                     Toast.makeText( SignUpActivity.this, R.string.error_user_cannot_signUp, Toast.LENGTH_SHORT ).show();
-                    Log.e(TAG, "onComplete: Failed=" + task.getException().getMessage());
+                    Log.e( TAG, "onComplete: Failed=" + task.getException().getMessage() );
                 }
             }
         } );
@@ -221,7 +227,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void sendUserInformationToFirebase() {
-        final DatabaseReference databaseReference =  FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         final StorageReference storageReference = firebaseStorage.getReference();
 
@@ -239,14 +245,16 @@ public class SignUpActivity extends AppCompatActivity {
                                 user.setName( userNameTextInputEditText.getText().toString() );
                                 user.setEmail( emailTextInputEditText.getText().toString() );
                                 user.setPassword( passwordTextInputEditText.getText().toString() );
-                                user.setPhoto( task.getResult().toString());
+                                user.setUserPhoneNo( userPhoneNoInputEditText.getText().toString() );
+                                user.setPhoto( task.getResult().toString() );
+
                                 user.setAssignedTrip( user.getAssignedTrip() );
                                 databaseReference.child( "Users" ).child( mAuth.getCurrentUser().getUid() ).setValue( user ).addOnCompleteListener( new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             Toast.makeText( SignUpActivity.this, R.string.user_info_added, Toast.LENGTH_SHORT ).show();
-                                        }else{
+                                        } else {
                                             Toast.makeText( SignUpActivity.this, R.string.error_user_cannot_signUp, Toast.LENGTH_SHORT ).show();
                                         }
                                     }

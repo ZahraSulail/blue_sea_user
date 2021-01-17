@@ -33,14 +33,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_log_in);
+        setContentView( R.layout.activity_log_in );
 
         emailTextInputLayout = findViewById( R.id.text_input_email );
         passwordTextInputLayout = findViewById( R.id.text_input_password );
         emailEditText = findViewById( R.id.edit_text_email );
         passwordEditText = findViewById( R.id.edit_text_password );
         loginButton = findViewById( R.id.button_login );
-
 
 
         loginButton.setOnClickListener( new View.OnClickListener() {
@@ -53,50 +52,50 @@ public class LoginActivity extends AppCompatActivity {
         } );
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(firebaseUser != null){
-            fetchUserProfileAndLogin( firebaseUser.getUid());
+        if (firebaseUser != null) {
+            fetchUserProfileAndLogin( firebaseUser.getUid() );
         }
     }
 
 
     private void logInClicked() {
-        if(!isValidEmail(emailEditText.getText())){
-            emailTextInputLayout.setError( getString( R.string.invalid_email));
+        if (!isValidEmail( emailEditText.getText() )) {
+            emailTextInputLayout.setError( getString( R.string.invalid_email ) );
             return;
         }
 
-        if(passwordEditText.getText().length()< 6){
-            passwordTextInputLayout.setError(getString( R.string.invalid_password_length ) );
+        if (passwordEditText.getText().length() < 6) {
+            passwordTextInputLayout.setError( getString( R.string.invalid_password_length ) );
 
-        }else {
-           FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword( emailEditText.getText().toString(), passwordEditText.getText().toString())
+        } else {
+            FirebaseAuth.getInstance()
+                    .signInWithEmailAndPassword( emailEditText.getText().toString(), passwordEditText.getText().toString() )
                     .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                           if(task.isSuccessful()) {
-                               Toast.makeText( LoginActivity.this, R.string.log_in_successfull, Toast.LENGTH_SHORT ).show();
-                               String userId = task.getResult().getUser().getUid();
-                               fetchUserProfileAndLogin( userId );
-                           }else{
-                               Toast.makeText( LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG).show();
-                           }
+                            if (task.isSuccessful()) {
+                                Toast.makeText( LoginActivity.this, R.string.log_in_successfull, Toast.LENGTH_SHORT ).show();
+                                String userId = task.getResult().getUser().getUid();
+                                fetchUserProfileAndLogin( userId );
+                            } else {
+                                Toast.makeText( LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG ).show();
+                            }
                         }
                     } );
         }
     }
 
-    public static boolean isValidEmail(CharSequence target){
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher( target ).matches());
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty( target ) && Patterns.EMAIL_ADDRESS.matcher( target ).matches());
 
     }
 
-    private void fetchUserProfileAndLogin(String userId){
+    private void fetchUserProfileAndLogin(String userId) {
         TripManager.getInstance().getUserProfile( userId, new CallBack() {
             @Override
             public void onComplete(boolean isSuccessful) {
-                if(isSuccessful){
-                    startActivity(new Intent( getApplicationContext(), MainActivity.class) );
+                if (isSuccessful) {
+                    startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
                     finish();
                 }
 
@@ -104,5 +103,5 @@ public class LoginActivity extends AppCompatActivity {
         } );
     }
 
-    }
+}
 

@@ -38,7 +38,7 @@ public class Captain implements Serializable {
     }
 
 
-    public enum status{
+    public enum status {
         AVAILABEL,
         ON_TRIP
     }

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_user_profile) {
             Intent intent = new Intent( getApplicationContext(), UserProfileActivity.class );
             startActivity( intent );
-              return true;
+            return true;
         } else {
             if (id == R.id.action_log_out) {
                 if (mAuth.getCurrentUser() != null) {
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             }
-            return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected( item );
         }
     }
 }

@@ -14,26 +14,27 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TripItemsAdapter extends  RecyclerView.Adapter<TripItemsAdapter.TripViewHolder> {
+public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.TripViewHolder> {
 
     private List<Trip> mTripList;
     private OnTripClickListiner mTripClickListiner;
 
-    public TripItemsAdapter(List<Trip> tripList,  OnTripClickListiner tripClickListiner){
+    public TripItemsAdapter(List<Trip> tripList, OnTripClickListiner tripClickListiner) {
         this.mTripList = tripList;
         this.mTripClickListiner = tripClickListiner;
 
     }
+
     @NonNull
     @Override
     public TripItemsAdapter.TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_trip, parent, false );
-        return new TripViewHolder(view);
+        View view = LayoutInflater.from( parent.getContext() ).inflate( R.layout.item_trip, parent, false );
+        return new TripViewHolder( view );
     }
 
     @Override
     public void onBindViewHolder(@NonNull TripItemsAdapter.TripViewHolder holder, int position) {
-        holder.bind( mTripList.get(position));
+        holder.bind( mTripList.get( position ) );
     }
 
     @Override
@@ -61,19 +62,19 @@ public class TripItemsAdapter extends  RecyclerView.Adapter<TripItemsAdapter.Tri
             itemView.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Trip trip = mTripList.get(getAdapterPosition());
+                    Trip trip = mTripList.get( getAdapterPosition() );
                     mTripClickListiner.onTripClick( trip );
                 }
             } );
         }
 
-        public void bind(Trip trip){
+        public void bind(Trip trip) {
 
-            mDateTextView.setText( trip.getFormattedDate());
-            mPositionTextView.setText( trip.getPositionSeaPortName());
-            mDestinationPortTextView.setText( trip.getDestinationSeaportName());
-            mAvailableSeatsTextView.setText(String.valueOf( trip.getAvailableSeats()));
-            mBookedSeatsTextView.setText(String.valueOf( trip.getBookedSeats()));
+            mDateTextView.setText( trip.getFormattedDate() );
+            mPositionTextView.setText( trip.getStartPortName() );
+            mDestinationPortTextView.setText( trip.getDestinationSeaportName() );
+            mAvailableSeatsTextView.setText( String.valueOf( trip.getAvailableSeats() ) );
+            mBookedSeatsTextView.setText( String.valueOf( trip.getBookedSeats() ) );
 
         }
     }

@@ -8,27 +8,27 @@ import java.util.Locale;
 
 
 public class Trip implements Serializable {
+
     private String status;
     private String id;
     private String captainId;
     private String userId;
-    private double positionLat;
-    private double positionLatng;
+    private double startLat;
+    private double startLng;
     private double destinationLat;
     private double destinationLng;
     private double currentLat;
     private double currentLng;
-    private String positionSeaPortName;
+    private String startPortName;
     private String destinationSeaportName;
     private int availableSeats;
     private int bookedSeats;
     private long dateTime;
 
 
+    public Trip() {
 
-public Trip(){
-
-}
+    }
 
     public long getDateTime() {
         return dateTime;
@@ -70,20 +70,20 @@ public Trip(){
         this.userId = userId;
     }
 
-    public double getPositionLat() {
-        return positionLat;
+    public double getStartLat() {
+        return startLat;
     }
 
-    public void setPositionLat(double positionLat) {
-        this.positionLat = positionLat;
+    public void setStartLat(double startLat) {
+        this.startLat = startLat;
     }
 
-    public double getPositionLatng() {
-        return positionLatng;
+    public double getStartLng() {
+        return startLng;
     }
 
-    public void setPositionLatng(double positionLatng) {
-        this.positionLatng = positionLatng;
+    public void setStartLng(double startLng) {
+        this.startLng = startLng;
     }
 
     public double getDestinationLat() {
@@ -118,12 +118,12 @@ public Trip(){
         this.currentLng = currentLng;
     }
 
-    public String getPositionSeaPortName() {
-        return positionSeaPortName;
+    public String getStartPortName() {
+        return startPortName;
     }
 
-    public void setPositionSeaPortName(String positionSeaPortName) {
-        this.positionSeaPortName = positionSeaPortName;
+    public void setStartPortName(String startPortName) {
+        this.startPortName = startPortName;
     }
 
     public String getDestinationSeaportName() {
@@ -134,33 +134,32 @@ public Trip(){
         this.destinationSeaportName = destinationSeaportName;
     }
 
-    public int getAvailableSeats(){
-    return availableSeats;
+    public int getAvailableSeats() {
+        return availableSeats;
     }
 
-    public void setAvailableSeats(int seats){
-    this.availableSeats = seats;
+    public void setAvailableSeats(int seats) {
+        this.availableSeats = seats;
     }
 
-    public int getBookedSeats(){
-    return bookedSeats;
+    public int getBookedSeats() {
+        return bookedSeats;
     }
 
-    public void setBookedSeats(int bookedSeats){
-    this.bookedSeats = bookedSeats;
+    public void setBookedSeats(int bookedSeats) {
+        this.bookedSeats = bookedSeats;
     }
 
 
-
-    public String getFormattedDate(){
-        return DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault()).format( new Date(dateTime));
+    public String getFormattedDate() {
+        return DateFormat.getDateInstance( DateFormat.FULL, Locale.getDefault() ).format( new Date( dateTime ) );
     }
 
     /*
       Statuses of trip
      */
-    public enum status{
-
+    public enum status {
+        AVAILABLE,
         GOING_TO_DESTINATION,
         ARRIVED
 
