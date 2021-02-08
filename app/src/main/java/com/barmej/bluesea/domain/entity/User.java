@@ -1,8 +1,10 @@
 package com.barmej.bluesea.domain.entity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class User implements Serializable {
+
     private String id;
     private String assignedTrip;
     private String name;
@@ -10,6 +12,7 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String userPhoneNo;
+    private HashMap<String, String> trips = new HashMap<>();
 
 
     public User(String id) {
@@ -75,5 +78,13 @@ public class User implements Serializable {
 
     public void setUserPhoneNo(String userPhoneNo) {
         this.userPhoneNo = userPhoneNo;
+    }
+
+    public void setTrips(HashMap<String, String> trips) {
+        this.trips = trips;
+    }
+
+    public HashMap<String, String> getTrips() {
+        return trips;
     }
 }

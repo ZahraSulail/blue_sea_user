@@ -5,19 +5,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.callback.OnTripClickListiner;
 import com.barmej.bluesea.domain.entity.Trip;
 
+import java.util.HashMap;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.TripViewHolder> {
 
     private List<Trip> mTripList;
     private OnTripClickListiner mTripClickListiner;
+    private HashMap<String,String> mReservedTrips;
 
     public TripItemsAdapter(List<Trip> tripList, OnTripClickListiner tripClickListiner) {
         this.mTripList = tripList;
@@ -40,6 +42,10 @@ public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.Trip
     @Override
     public int getItemCount() {
         return mTripList.size();
+    }
+
+    public void setReservedTrips(HashMap<String, String> reservedTrips) {
+        mReservedTrips = reservedTrips;
     }
 
     public class TripViewHolder extends RecyclerView.ViewHolder {
@@ -70,14 +76,21 @@ public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.Trip
 
         public void bind(Trip trip) {
 
-            mDateTextView.setText( trip.getFormattedDate() );
+
+            if(mReservedTrips != null && mReservedTrips.containsKey(trip.getId())) {
+                // show reserved icon
+                mBookedSeatsTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_circle_accent_color_24dp, 0, 0, 0);
+            } else {
+                // Hide reserved icon
+                mBookedSeatsTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+            mDateTextView.setText( trip.getFormattedDate());
             mPositionTextView.setText( trip.getStartPortName() );
             mDestinationPortTextView.setText( trip.getDestinationSeaportName() );
             mAvailableSeatsTextView.setText( String.valueOf( trip.getAvailableSeats() ) );
+            mAvailableSeatsTextView.setVisibility(View.VISIBLE);
             mBookedSeatsTextView.setText( String.valueOf( trip.getBookedSeats() ) );
 
         }
     }
-
-
 }

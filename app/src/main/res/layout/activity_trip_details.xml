@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                app:layout_constraintBottom_toBottomOf="@+id/det_text_view_position"
                 app:layout_constraintEnd_toEndOf="@+id/det_text_view_date"
                 app:layout_constraintStart_toStartOf="@+id/det_text_view_date"
                 app:layout_constraintTop_toBottomOf="@+id/det_text_view_date"
