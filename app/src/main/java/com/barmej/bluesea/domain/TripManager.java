@@ -111,7 +111,7 @@ public class TripManager {
         fullStatus.setCaptain( captain );
         fullStatus.setTrip( trip );
 
-        if (trip.getStatus().equals( Trip.status.ARRIVED.name() )) {
+        if (trip.getStatus().equals( Trip.Status.ARRIVED.name() )) {
             removeTripListener();
 
             notifyListener( fullStatus );

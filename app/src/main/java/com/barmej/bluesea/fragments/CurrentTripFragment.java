@@ -104,9 +104,9 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
         String tripStatus = status.getTrip().getStatus();
         String tripStatusText = "";
 
-        if (tripStatus.equals( Trip.status.GOING_TO_DESTINATION )) {
+        if (tripStatus.equals( Trip.Status.GOING_TO_DESTINATION )) {
             tripStatusText = getString( R.string.trip_going_to_destination );
-        } else if (tripStatus.equals( Trip.status.ARRIVED )) {
+        } else if (tripStatus.equals( Trip.Status.ARRIVED )) {
             tripStatusText = getString( R.string.trip_arrived );
 
             AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );

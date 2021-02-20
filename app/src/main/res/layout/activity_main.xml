@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/trip_list_container"
-        android:name="com.barmej.bluesea.fragments.TripListFragment"
+        android:name="com.barmej.bluesea.fragments.CurrentTripStatusFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

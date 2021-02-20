@@ -46,11 +46,12 @@
     <string name="user_email">الايميل</string>
     <string name="phone_no">رقم الهاتف</string>
     <string name="add_phone_no">"من فضلك ادخل رقم الهاتف "</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="seat_is_reserved">تم حجز المقعد بنجاح</string>
     <string name="trip_is_reserved">الرحلة محجوزة مسبقا</string>
     <string name="book_trip">احجز رحلة</string>
     <string name="you_have_trip_at_the_same_time">لديك رحلة في نفس الوقت لا يمكنك حجز هذه الرحلة</string>
+    <string name="going_to_destination">الى الوجهة</string>
 
 </resources>

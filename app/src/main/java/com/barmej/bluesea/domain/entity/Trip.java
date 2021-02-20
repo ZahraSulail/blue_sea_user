@@ -158,7 +158,7 @@ public class Trip implements Serializable {
     /*
       Statuses of trip
      */
-    public enum status {
+    public enum Status {
         AVAILABLE,
         GOING_TO_DESTINATION,
         ARRIVED

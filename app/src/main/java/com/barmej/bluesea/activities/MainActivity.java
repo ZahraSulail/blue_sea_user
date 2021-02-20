@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.fragments.TripListFragment;
 import com.google.firebase.auth.FirebaseAuth;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         //FragmentManager to find Fragment by id
         FragmentManager manager = getSupportFragmentManager();
-        mTripListFragment = (TripListFragment) manager.findFragmentById( R.id.trip_list_container );
+        mTripListFragment = (TripListFragment) manager.findFragmentById( R.id.current_trip_container );
 
         mAuth = FirebaseAuth.getInstance();
 
