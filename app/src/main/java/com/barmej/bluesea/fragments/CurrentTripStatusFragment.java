@@ -79,7 +79,5 @@ public class CurrentTripStatusFragment extends Fragment {
 
     }
 
-    public void goToCurrentTripFragment(View view){
 
-    }
 }

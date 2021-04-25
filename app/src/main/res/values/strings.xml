@@ -53,5 +53,6 @@
     <string name="book_trip">احجز رحلة</string>
     <string name="you_have_trip_at_the_same_time">لديك رحلة في نفس الوقت لا يمكنك حجز هذه الرحلة</string>
     <string name="going_to_destination">الى الوجهة</string>
+    <string name="no_user">لم يتم العثور على مستخد</string>
 
 </resources>

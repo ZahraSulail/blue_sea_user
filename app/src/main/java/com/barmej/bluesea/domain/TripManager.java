@@ -1,5 +1,8 @@
 package com.barmej.bluesea.domain;
 
+import androidx.annotation.NonNull;
+
+import com.barmej.bluesea.Constants;
 import com.barmej.bluesea.callback.CallBack;
 import com.barmej.bluesea.callback.StatusCallBack;
 import com.barmej.bluesea.domain.entity.Captain;
@@ -11,17 +14,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import androidx.annotation.NonNull;
-
 public class TripManager {
 
     private FirebaseDatabase database;
     private static TripManager instance;
-
-    private static final String USER_REF_PATH = "users";
-    private static final String CAPTAIN_REF_PATH = "captains";
-    private static final String TRIP_REF_Path = "trips";
-
     private User user;
     private Trip trip;
     private Captain captain;
@@ -41,15 +37,11 @@ public class TripManager {
     }
 
     public void getUserProfile(final String userId, final CallBack callBack) {
-        database.getReference( USER_REF_PATH ).child( userId ).addListenerForSingleValueEvent( new ValueEventListener() {
+        database.getReference(Constants.USER_REF_PATH ).child( userId ).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue( User.class );
-                if (user != null) {
-                    callBack.onComplete( true );
-                } else {
-                    callBack.onComplete( false );
-                }
+                callBack.onComplete(user != null);
             }
 
             @Override
@@ -76,12 +68,12 @@ public class TripManager {
     }
 
     private void startMonitoringTrip(String id) {
-        tripListener = database.getReference( TRIP_REF_Path ).child( id ).addValueEventListener( new ValueEventListener() {
+        tripListener = database.getReference( Constants.TRIP_REF_PATH).child( id ).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 trip = snapshot.getValue( Trip.class );
                 if (captain == null) {
-                    database.getReference( CAPTAIN_REF_PATH ).child( trip.getCaptainId() ).addListenerForSingleValueEvent( new ValueEventListener() {
+                    database.getReference( Constants.CAPTAIN_REF_PATH ).child( trip.getCaptainId() ).addListenerForSingleValueEvent( new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             captain = snapshot.getValue( Captain.class );
@@ -122,7 +114,7 @@ public class TripManager {
             captain = null;
             fullStatus.setTrip( null );
             fullStatus.setCaptain( null );
-            database.getReference( TRIP_REF_Path ).child( user.getId() ).setValue( user );
+            database.getReference( Constants.TRIP_REF_PATH).child( user.getId() ).setValue( user );
             notifyListener( fullStatus );
 
         } else {
@@ -132,7 +124,7 @@ public class TripManager {
 
     private void removeTripListener() {
         if (tripListener != null && trip != null) {
-            database.getReference( TRIP_REF_Path ).child( trip.getId() ).removeEventListener( tripListener );
+            database.getReference( Constants.TRIP_REF_PATH).child( trip.getId() ).removeEventListener( tripListener );
             tripListener = null;
         }
     }

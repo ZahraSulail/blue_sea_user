@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.barmej.bluesea.Constants;
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.domain.entity.Trip;
 import com.barmej.bluesea.domain.entity.User;
@@ -32,15 +33,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 public class TripDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
-   /*
 
-    */
-    public static final String TRIP_DATA = "trip_data";
-    private static final String MAPVIEW_BUNDLE_KEY = "mapViewBundleKey";
-
+    /*
+     Define required variables
+     */
     private CardView mCardView;
     private TextView mDateTextView;
     private TextView mPositionTextView;
@@ -53,13 +51,14 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
     private DatabaseReference databaseReference;
     private Trip mTrip;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_details);
 
+        /*
+         Find views by ids and assigned them to variables
+         */
         mCardView = findViewById(R.id.card_view);
         mDateTextView = findViewById(R.id.det_text_view_date);
         mPositionTextView = findViewById(R.id.det_text_view_position);
@@ -67,17 +66,29 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         mAvailableSeatsTextView = findViewById(R.id.det_text_available_seats);
         mBookButton = findViewById(R.id.button_book);
 
+        /*
+         Get instance of DatabseReference
+         */
         databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        /*
+         new object of Trip
+         */
         mTrip = new Trip();
 
+        /*
+         Find mapView by id and save it in saveInstance
+         */
         mapView = findViewById(R.id.map);
         mapViewBundle = null;
         if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+            mapViewBundle = savedInstanceState.getBundle(Constants.MAPVIEW_BUNDLE_KEY);
         }
 
-
-        mTrip = (Trip) getIntent().getSerializableExtra(TRIP_DATA);
+        /*
+         Get Trip data from TripListFragment and set information on the views
+         */
+        mTrip = (Trip) getIntent().getSerializableExtra(Constants.TRIP_DATA);
 
         if (mTrip != null) {
             mDateTextView.setText(mTrip.getFormattedDate());
@@ -89,11 +100,17 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
             return;
         }
 
+        /*
+         Call getMapAsync() to register the callback.
+         */
         if (mapView != null) {
             mapView.onCreate(mapViewBundle);
             mapView.getMapAsync(this);
         }
 
+        /*
+         Click this button to implement bookTrip method
+         */
         mBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,21 +126,23 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         //Bundle to save state of the map
-        mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        mapViewBundle = outState.getBundle(Constants.MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle == null) {
             mapViewBundle = new Bundle();
-            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+            outState.putBundle(Constants.MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
         mapView.onSaveInstanceState(mapViewBundle);
     }
 
+    /*
+     onMapReady() to display the trip positions on the map and show its markers
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mGoogleMap = googleMap;
         if (mTrip.getCurrentLat() != 0 && mTrip.getCurrentLng() != 0) {
             LatLng currentLatLng = new LatLng(mTrip.getCurrentLat(), mTrip.getCurrentLng());
-            googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.boat)))
-                    .setPosition(currentLatLng);
+            googleMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.boat)));
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
             googleMap.moveCamera(cameraUpdate);
 
@@ -176,12 +195,13 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         super.onDestroy();
         mapView.onDestroy();
     }
+
     /*
      bookTrip method allow user to reserve one trip at a time and save it to Fierbase RealTime Databse
      */
     public void bookTrip() {
 
-        databaseReference.child("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -196,7 +216,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                         String date = entry.getValue().toString();
                         if (date.equals(mTrip.getFormattedDate())) {
                             isTimeFree = false;
-                            // TODO: You have reserved another trip at the same time
+                            //If you have reserved another trip at the same time
                             Toast.makeText(TripDetailsActivity.this, R.string.you_have_trip_at_the_same_time, Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -209,13 +229,13 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                         //Check if there is atleast one available seat to be reserve
                         if (availableSeats != 0) {
 
-                            //update trip available seats and booked seats and insert new values to the firebse database
+                            //Update trip available seats and booked seats and insert new values to the firebse database
                             mTrip.setAvailableSeats(mTrip.getAvailableSeats() - 1);
                             mTrip.setBookedSeats(mTrip.getBookedSeats() + 1);
 
                             System.out.println("Trip ID " + mTrip.getId());
 
-                            databaseReference.child("Trip_Details")
+                            databaseReference.child(Constants.TRIP_REF_PATH)
                                     .child(mTrip.getId())
                                     .setValue(mTrip)
 
@@ -248,7 +268,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                     }
 
                 } else {
-                    // TODO: Trip is already reserved
+                    //Trip is already reserved
                     Toast.makeText(TripDetailsActivity.this, R.string.trip_is_reserved, Toast.LENGTH_SHORT).show();
                 }
 

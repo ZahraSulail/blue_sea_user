@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.barmej.bluesea.Constants;
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.domain.entity.User;
 import com.bumptech.glide.Glide;
@@ -14,16 +18,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 public class UserProfileActivity extends AppCompatActivity {
+
     private static final String TAG = "FirebaseImageLoader";
+
+    /*
+     Define variabkes required in this activity
+     */
     private ImageView userPhotoImageView;
     private TextView userNameTextView;
     private TextView userEmailTextView;
     private TextView userPhoneNoTextView;
 
+    /*
+     FirebaseAuth object
+     */
     private FirebaseAuth mAuth;
 
 
@@ -34,22 +43,31 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_user_profile );
 
-
+        /*
+         Get an instance of FirebaseAuth
+         */
         mAuth = FirebaseAuth.getInstance();
+
+        /*
+         Find views by ids and assigned to variables
+         */
         userPhotoImageView = findViewById( R.id.image_view_user_photo );
         userNameTextView = findViewById( R.id.text_view_user_name );
         userEmailTextView = findViewById( R.id.text_view_user_email );
         userPhoneNoTextView = findViewById( R.id.text_view_user_phone );
 
+        /*
+         This method implemented directly when current uuser access his/her/ profile
+         */
         loadUserInformation();
-
-
     }
 
-
+    /*
+     This method get the current user profile information stored in the user table in FirebaseDatabse
+     */
     private void loadUserInformation() {
 
-        FirebaseDatabase.getInstance().getReference().child( "Users" ).child( mAuth.getCurrentUser().getUid() ).addValueEventListener( new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(Constants.USER_REF_PATH).child( mAuth.getCurrentUser().getUid() ).addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

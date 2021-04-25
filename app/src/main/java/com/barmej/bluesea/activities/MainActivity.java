@@ -20,28 +20,37 @@ public class MainActivity extends AppCompatActivity {
      */
     TripListFragment mTripListFragment;
 
-    //private FrameLayout fragmentContainer;
-
+    /*
+     FirebaseAuth object
+     */
     FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_main );
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
 
-        //FragmentManager to find Fragment by id
+        /*
+        FragmentManager to find Fragment by id
+        */
         FragmentManager manager = getSupportFragmentManager();
-        mTripListFragment = (TripListFragment) manager.findFragmentById( R.id.current_trip_container );
+        mTripListFragment = (TripListFragment) manager.findFragmentById(R.id.trip_list_container);
 
+        /*
+         Get an instance of FirebaseAuth
+         */
         mAuth = FirebaseAuth.getInstance();
 
     }
 
+    /*
+     Menu allows user to access profile and logout from firebase
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.menu, menu );
+        inflater.inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -50,20 +59,20 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_user_profile) {
-            Intent intent = new Intent( getApplicationContext(), UserProfileActivity.class );
-            startActivity( intent );
+            Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+            startActivity(intent);
             return true;
         } else {
             if (id == R.id.action_log_out) {
                 if (mAuth.getCurrentUser() != null) {
                     FirebaseAuth.getInstance().signOut();
                     finish();
-                    Intent intent = new Intent( getApplicationContext(), SignUpActivity.class );
-                    startActivity( intent );
+                    Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                    startActivity(intent);
                     return true;
                 }
             }
-            return super.onOptionsItemSelected( item );
+            return super.onOptionsItemSelected(item);
         }
     }
 }

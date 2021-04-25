@@ -7,6 +7,9 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.barmej.bluesea.R;
 import com.barmej.bluesea.callback.CallBack;
 import com.barmej.bluesea.domain.TripManager;
@@ -19,11 +22,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 public class LoginActivity extends AppCompatActivity {
 
+    /*
+     Reference of varailbels required in this activity
+     */
     private TextInputLayout emailTextInputLayout;
     private TextInputLayout passwordTextInputLayout;
     private TextInputEditText emailEditText;
@@ -32,75 +35,97 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_log_in );
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_log_in);
 
-        emailTextInputLayout = findViewById( R.id.text_input_email );
-        passwordTextInputLayout = findViewById( R.id.text_input_password );
-        emailEditText = findViewById( R.id.edit_text_email );
-        passwordEditText = findViewById( R.id.edit_text_password );
-        loginButton = findViewById( R.id.button_login );
+        /*
+          find views by id and assigned them to the variables
+         */
+        emailTextInputLayout = findViewById(R.id.text_input_email);
+        passwordTextInputLayout = findViewById(R.id.text_input_password);
+        emailEditText = findViewById(R.id.edit_text_email);
+        passwordEditText = findViewById(R.id.edit_text_password);
+        loginButton = findViewById(R.id.button_login);
 
-
-        loginButton.setOnClickListener( new View.OnClickListener() {
+        /*
+         loginButton.setOnClickListener that handle logInClicke
+         method to allow user access firebase account
+         */
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logInClicked();
-                startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
-                finish();
-            }
-        } );
 
+            }
+        });
+
+        /*
+         Get an instance of FirebaseAuth and check if the user is exist
+         */
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
-            fetchUserProfileAndLogin( firebaseUser.getUid() );
+            fetchUserProfileAndLogin(firebaseUser.getUid());
         }
     }
 
-
+    /*
+     logInClicked method: user login to firebase with email and password
+     */
     private void logInClicked() {
-        if (!isValidEmail( emailEditText.getText() )) {
-            emailTextInputLayout.setError( getString( R.string.invalid_email ) );
+        if (!isValidEmail(emailEditText.getText())) {
+            emailTextInputLayout.setError(getString(R.string.invalid_email));
             return;
         }
 
         if (passwordEditText.getText().length() < 6) {
-            passwordTextInputLayout.setError( getString( R.string.invalid_password_length ) );
-
-        } else {
-            FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword( emailEditText.getText().toString(), passwordEditText.getText().toString() )
-                    .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText( LoginActivity.this, R.string.log_in_successfull, Toast.LENGTH_SHORT ).show();
-                                String userId = task.getResult().getUser().getUid();
-                                fetchUserProfileAndLogin( userId );
-                            } else {
-                                Toast.makeText( LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG ).show();
-                            }
-                        }
-                    } );
+            passwordTextInputLayout.setError(getString(R.string.invalid_password_length));
+            return;
         }
+
+        System.out.println("Try to login");
+
+        FirebaseAuth.getInstance()
+                .signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            System.out.println("Response: Successful");
+                            String userId = task.getResult().getUser().getUid();
+                            fetchUserProfileAndLogin(userId);
+                        } else {
+                            System.out.println("Response: Not Successful");
+                            Toast.makeText(LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
     }
 
     public static boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty( target ) && Patterns.EMAIL_ADDRESS.matcher( target ).matches());
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
 
     }
 
+    /*
+     fetchUserProfileAndLOgin method: if login successful user witll move
+      to main Activity that shwos "TripListFragment" list of trips available
+     */
     private void fetchUserProfileAndLogin(String userId) {
-        TripManager.getInstance().getUserProfile( userId, new CallBack() {
+        System.out.println("Response: fetch profile");
+        TripManager.getInstance().getUserProfile(userId, new CallBack() {
             @Override
             public void onComplete(boolean isSuccessful) {
                 if (isSuccessful) {
-                    startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
+                    System.out.println("Response: Successfull");
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, R.string.no_user, Toast.LENGTH_LONG).show();
                 }
 
             }
-        } );
+        });
     }
 
 }
