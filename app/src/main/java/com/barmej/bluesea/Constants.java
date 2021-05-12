@@ -23,4 +23,10 @@ public class Constants {
     //Constant reference: path of the trips table in firebase databse
     public static final String TRIP_REF_PATH = "Trip_Details";
 
+    //Constant reference of trip intial status
+    public static final String INITIAL_STATUS_EXTRA = "initial_status_extra";
+
+    //Constant reference request code to use it with requset location permission
+    public static final int REQUEST_LOCATION_PERMISSION = 1;
+
 }

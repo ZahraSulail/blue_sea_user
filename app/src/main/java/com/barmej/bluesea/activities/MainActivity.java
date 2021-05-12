@@ -10,10 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.barmej.bluesea.R;
+import com.barmej.bluesea.callback.OnCurrentTripStatusClickListener;
+import com.barmej.bluesea.domain.entity.FullStatus;
+import com.barmej.bluesea.fragments.CurrentTripFragment;
 import com.barmej.bluesea.fragments.TripListFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnCurrentTripStatusClickListener {
 
     /*
       TripListFragment Object
@@ -41,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
          Get an instance of FirebaseAuth
          */
         mAuth = FirebaseAuth.getInstance();
+
+
 
     }
 
@@ -74,6 +79,18 @@ public class MainActivity extends AppCompatActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    /*
+     Click on this fragment to move to CurrentTripFragment that shows trip details and trip on the map
+     */
+    @Override
+    public void onCurrentTripStatusClick(FullStatus status) {
+        CurrentTripFragment fragment = CurrentTripFragment.getInstance(status);
+                 getSupportFragmentManager().beginTransaction()
+                .replace(R.id.layout_main, fragment, "findThisFragment")
+                .addToBackStack(null)
+                .commit();
     }
 }
 

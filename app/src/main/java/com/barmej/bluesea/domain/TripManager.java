@@ -16,19 +16,29 @@ import com.google.firebase.database.ValueEventListener;
 
 public class TripManager {
 
-    private FirebaseDatabase database;
+    /*
+    References of objects
+     */
     private static TripManager instance;
+    private FirebaseDatabase database;
     private User user;
     private Trip trip;
     private Captain captain;
     private StatusCallBack statusCallBack;
     private ValueEventListener tripListener;
-    FullStatus fullStatus;
+    private FullStatus fullStatus;
 
+    /*
+     Constructor of TripManager class
+     */
     private TripManager() {
+        //Get an instance of FirebaseDatabase
         database = FirebaseDatabase.getInstance();
     }
 
+    /*
+     Get instance of TripManager
+     */
     public static TripManager getInstance() {
         if (instance == null) {
             instance = new TripManager();
@@ -36,11 +46,14 @@ public class TripManager {
         return instance;
     }
 
+    /*
+     Get user profile information one time of callback
+     */
     public void getUserProfile(final String userId, final CallBack callBack) {
-        database.getReference(Constants.USER_REF_PATH ).child( userId ).addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference(Constants.USER_REF_PATH).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                user = snapshot.getValue( User.class );
+                user = snapshot.getValue(User.class);
                 callBack.onComplete(user != null);
             }
 
@@ -48,35 +61,46 @@ public class TripManager {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        } );
+        });
     }
 
-    public void startListeningToUupdates(StatusCallBack statusCallBack) {
+    /*
+     listening for status
+     */
+    public void startListeningToUpdates(StatusCallBack statusCallBack) {
         this.statusCallBack = statusCallBack;
-        startMonitoringState();
+       // startMonitoringState();
     }
 
-    private void startMonitoringState() {
+    /*
+    monitor user's assignedTrip
+     */
+   /* private void startMonitoringState() {
+        startMonitoringTrip(user.getAssignedTrip());
+    }*/
 
-        startMonitoringTrip( user.getAssignedTrip() );
-    }
-
+    /*
+     notify status callback
+     */
     private void notifyListener(FullStatus fullStatus) {
         if (statusCallBack != null) {
-            statusCallBack.onUpdate( fullStatus );
+            statusCallBack.onUpdate(fullStatus);
         }
     }
 
-    private void startMonitoringTrip(String id) {
-        tripListener = database.getReference( Constants.TRIP_REF_PATH).child( id ).addValueEventListener(new ValueEventListener() {
+    /*
+    monitor trip and get snapshot from databse
+     */
+    public void startMonitoringTrip(String id) {
+        tripListener = database.getReference(Constants.TRIP_REF_PATH).child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                trip = snapshot.getValue( Trip.class );
-                if (captain == null) {
-                    database.getReference( Constants.CAPTAIN_REF_PATH ).child( trip.getCaptainId() ).addListenerForSingleValueEvent( new ValueEventListener() {
+                trip = snapshot.getValue(Trip.class);
+                /*if (captain == null) {
+                    database.getReference(Constants.CAPTAIN_REF_PATH).child(trip.getCaptainId()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            captain = snapshot.getValue( Captain.class );
+                            captain = snapshot.getValue(Captain.class);
                             updateStatusWithTrip();
                         }
 
@@ -84,47 +108,49 @@ public class TripManager {
                         public void onCancelled(@NonNull DatabaseError error) {
 
                         }
-                    } );
-                } else {
+                    });
+                } else {*/
                     updateStatusWithTrip();
-                }
+                /*}*/
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        } );
+        });
     }
 
+    /*
+    Update TripStatus ana set status of user, captain, and trip
+     */
     private void updateStatusWithTrip() {
         fullStatus = new FullStatus();
-        fullStatus.setUser( user );
-        fullStatus.setCaptain( captain );
-        fullStatus.setTrip( trip );
+        fullStatus.setUser(user);
+        fullStatus.setCaptain(captain);
+        fullStatus.setTrip(trip);
 
-        if (trip.getStatus().equals( Trip.Status.ARRIVED.name() )) {
+        if (trip.getStatus().equals(Trip.Status.ARRIVED.name())) {
             removeTripListener();
-
-            notifyListener( fullStatus );
-
-            user.setAssignedTrip( null );
-
+            notifyListener(fullStatus);
+            user.setAssignedTrip(null);
             trip = null;
             captain = null;
-            fullStatus.setTrip( null );
-            fullStatus.setCaptain( null );
-            database.getReference( Constants.TRIP_REF_PATH).child( user.getId() ).setValue( user );
-            notifyListener( fullStatus );
-
+            fullStatus.setTrip(null);
+            fullStatus.setCaptain(null);
+            database.getReference(Constants.TRIP_REF_PATH).child(user.getId()).setValue(user);
+            notifyListener(fullStatus);
         } else {
-            notifyListener( fullStatus );
+            notifyListener(fullStatus);
         }
     }
 
+    /*
+     removeTripListener when trip status is arrived
+     */
     private void removeTripListener() {
         if (tripListener != null && trip != null) {
-            database.getReference( Constants.TRIP_REF_PATH).child( trip.getId() ).removeEventListener( tripListener );
+            database.getReference(Constants.TRIP_REF_PATH).child(trip.getId()).removeEventListener(tripListener);
             tripListener = null;
         }
     }

@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.barmej.bluesea.R;
-import com.barmej.bluesea.callback.OnTripClickListiner;
+import com.barmej.bluesea.callback.OnTripClickListener;
 import com.barmej.bluesea.domain.entity.Trip;
 
 import java.util.HashMap;
@@ -18,10 +18,10 @@ import java.util.List;
 public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.TripViewHolder> {
 
     private List<Trip> mTripList;
-    private OnTripClickListiner mTripClickListiner;
+    private OnTripClickListener mTripClickListiner;
     private HashMap<String,String> mReservedTrips;
 
-    public TripItemsAdapter(List<Trip> tripList, OnTripClickListiner tripClickListiner) {
+    public TripItemsAdapter(List<Trip> tripList, OnTripClickListener tripClickListiner) {
         this.mTripList = tripList;
         this.mTripClickListiner = tripClickListiner;
 

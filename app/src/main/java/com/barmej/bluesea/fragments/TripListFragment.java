@@ -20,7 +20,7 @@ import com.barmej.bluesea.R;
 import com.barmej.bluesea.activities.LoginActivity;
 import com.barmej.bluesea.activities.TripDetailsActivity;
 import com.barmej.bluesea.adapter.TripItemsAdapter;
-import com.barmej.bluesea.callback.OnTripClickListiner;
+import com.barmej.bluesea.callback.OnTripClickListener;
 import com.barmej.bluesea.domain.entity.FullStatus;
 import com.barmej.bluesea.domain.entity.Trip;
 import com.barmej.bluesea.domain.entity.User;
@@ -33,7 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TripListFragment extends Fragment implements OnTripClickListiner {
+public class TripListFragment extends Fragment implements OnTripClickListener {
 
     /*
      Define variables required in this fragment
@@ -164,12 +164,9 @@ public class TripListFragment extends Fragment implements OnTripClickListiner {
      CurrentTripStatusFragment displayed to the user while trip ON_GOING_TO_DESTINATION
      */
     public void moveToCurrentTripStatusFragnment(Trip trip){
-        CurrentTripStatusFragment currentTripStatusFragment = new CurrentTripStatusFragment();
-        Bundle bundle = new Bundle();
         FullStatus status = new FullStatus();
         status.setTrip(trip);
-        bundle.putSerializable( CurrentTripStatusFragment.INITIAL_STATUS_EXTRA, status);
-        currentTripStatusFragment.setArguments(bundle);
+        CurrentTripStatusFragment currentTripStatusFragment = CurrentTripStatusFragment.getInstance(status);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.layout_main, currentTripStatusFragment );
