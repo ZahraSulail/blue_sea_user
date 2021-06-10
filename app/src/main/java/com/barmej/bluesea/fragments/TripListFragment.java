@@ -99,7 +99,7 @@ public class TripListFragment extends Fragment implements OnTripClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 User user = snapshot.getValue(User.class);
-                HashMap<String, String> trips = user.getTrips();
+                HashMap<String, Object> trips = user.getTrips();
                 mAdapter.setReservedTrips(trips);
                 mAdapter.notifyDataSetChanged();
             }

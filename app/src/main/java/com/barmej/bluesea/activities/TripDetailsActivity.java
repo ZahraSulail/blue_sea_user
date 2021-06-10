@@ -1,6 +1,7 @@
 package com.barmej.bluesea.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -33,13 +35,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class TripDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    /*
-     Define required variables
-     */
-    private CardView mCardView;
+    private static final String TAG = TripDetailsActivity.class.getSimpleName();
     private TextView mDateTextView;
     private TextView mPositionTextView;
     private TextView mDestinationTextView;
@@ -49,6 +49,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
     private MapView mapView;
     private GoogleMap mGoogleMap;
     private Bundle mapViewBundle;
+    private TextView tripStatusTextView;
     private DatabaseReference databaseReference;
     private Trip mTrip;
 
@@ -60,13 +61,17 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         /*
          Find views by ids and assigned them to variables
          */
-        mCardView = findViewById(R.id.card_view);
+        /*
+         Define required variables
+         */
+        CardView mCardView = findViewById(R.id.card_view);
         mDateTextView = findViewById(R.id.det_text_view_date);
         mPositionTextView = findViewById(R.id.det_text_view_position);
         mDestinationTextView = findViewById(R.id.det_text_view_destination);
         mAvailableSeatsTextView = findViewById(R.id.det_text_available_seats);
         mBookButton = findViewById(R.id.button_book);
         mCancelButton = findViewById(R.id.button_cancel);
+        tripStatusTextView = findViewById(R.id.text_view_trip_status);
 
         /*
          Get instance of DatabseReference
@@ -74,15 +79,11 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
         /*
-         new object of Trip
-         */
-        mTrip = new Trip();
-
-        /*
          Find mapView by id and save it in saveInstance
          */
         mapView = findViewById(R.id.map);
         mapViewBundle = null;
+
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(Constants.MAPVIEW_BUNDLE_KEY);
         }
@@ -97,15 +98,6 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
             mPositionTextView.setText(mTrip.getStartPortName());
             mDestinationTextView.setText(mTrip.getDestinationSeaportName());
             mAvailableSeatsTextView.setText(String.valueOf(mTrip.getAvailableSeats()));
-           /* if(mTrip.getStatus().equals(Trip.Status.GOING_TO_DESTINATION.name())) {
-                // Show on the way label
-                // Hide reserve button
-            } else if(mTrip.getStatus().equals(Trip.Status.ARRIVED.name())) {
-                // Show arrived label
-                // Hide reserve button
-            } else {
-                // Show the reserve button
-            }*/
         } else {
             finish();
             return;
@@ -115,16 +107,35 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-
-                mBookButton.setVisibility(View.GONE);
-                mCancelButton.setVisibility(View.VISIBLE);
-
-                HashMap<String, String> trips = user.getTrips();
-                if (trips.get(mTrip.getId()) == null) {
-                    mBookButton.setVisibility(View.VISIBLE);
-                } else {
+                HashMap<String, Object> trips = user.getTrips();
+                if (mTrip.getStatus().equals(Trip.Status.GOING_TO_DESTINATION.name())) {
+                    // Show on the way label
+                    // Hide reserve button
+                    Log.d(TAG, "onCreate: GOING_TO_DESTINATION");
+                    mCancelButton.setVisibility(View.GONE);
                     mBookButton.setVisibility(View.GONE);
+                    tripStatusTextView.setVisibility(View.VISIBLE);
+                } else if (mTrip.getStatus().equals(Trip.Status.ARRIVED.name())) {
+                    // Show arrived label
+                    // Hide reserve button
+                    Log.d(TAG, "onCreate: ARRIVED");
+                    mCancelButton.setVisibility(View.GONE);
+                    mBookButton.setVisibility(View.GONE);
+                    tripStatusTextView.setVisibility(View.VISIBLE);
+                    tripStatusTextView.setText("Arrived");
+                } else {
+                    // Show the reserve button
+                    Log.d(TAG, "onCreate: AVAILABLE");
+                    if (trips.get(mTrip.getId()) == null) {
+                        mBookButton.setVisibility(View.VISIBLE);
+                        mCancelButton.setVisibility(View.GONE);
+                    } else {
+                        mBookButton.setVisibility(View.GONE);
+                        mCancelButton.setVisibility(View.VISIBLE);
+                    }
                 }
+
+
             }
 
             @Override
@@ -149,6 +160,14 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
             public void onClick(View v) {
                 bookTrip();
             }
+        });
+
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelTrip();
+            }
+
         });
     }
 
@@ -235,16 +254,14 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
      */
     public void bookTrip() {
 
-        databaseReference.child(Constants.USER_REF_PATH).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child(Constants.USER_REF_PATH).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
 
-                mBookButton.setVisibility(View.GONE);
-                mCancelButton.setVisibility(View.VISIBLE);
-
-                //Check if current user has another trip at the same time of current trip
-                HashMap<String, String> trips = user.getTrips();
+                // Check if current user has another trip at the same time of current trip
+                assert user != null;
+                HashMap<String, Object> trips = user.getTrips();
                 if (trips.get(mTrip.getId()) == null) {
                     boolean isTimeFree = true;
                     Iterator it = trips.entrySet().iterator();
@@ -253,23 +270,21 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                         String date = entry.getValue().toString();
                         if (date.equals(mTrip.getFormattedDate())) {
                             isTimeFree = false;
-
-                            //If you have reserved another trip at the same time
+                            // If you have reserved another trip at the same time
                             Toast.makeText(TripDetailsActivity.this, R.string.you_have_trip_at_the_same_time, Toast.LENGTH_SHORT).show();
-
                         }
                     }
 
-                    //Check if current time is free to reserve a trip
+                    // Check if current time is free to reserve a trip
                     if (isTimeFree) {
+
                         // getvailableSeats object
-                        int availableSeats;
-                        availableSeats = mTrip.getAvailableSeats();
+                        int availableSeats = mTrip.getAvailableSeats();
 
                         //Check if there is atleast one available seat to be reserve
                         if (availableSeats != 0) {
 
-                            //Update trip available seats and booked seats and insert new values to the firebse database
+                            // Update trip available seats and booked seats and insert new values to the firebse database
                             mTrip.setAvailableSeats(mTrip.getAvailableSeats() - 1);
                             mTrip.setBookedSeats(mTrip.getBookedSeats() + 1);
 
@@ -278,7 +293,6 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                             databaseReference.child(Constants.TRIP_REF_PATH)
                                     .child(mTrip.getId())
                                     .setValue(mTrip)
-
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -286,7 +300,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                                             mAvailableSeatsTextView.setText(String.valueOf(mTrip.getAvailableSeats()));
                                             trips.put(mTrip.getId(), String.valueOf(mTrip.getFormattedDate()));
 
-                                            //Update Users table in firebase and insert trips child to save erversed trips by the current user
+                                            // Update Users table in firebase and insert trips child to save erversed trips by the current user
                                             databaseReference.child(Constants.USER_REF_PATH)
                                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                     .child("trips")
@@ -295,8 +309,10 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             //Change reserve button status
+
                                                             mBookButton.setVisibility(View.GONE);
                                                             mCancelButton.setVisibility(View.VISIBLE);
+
                                                             Toast.makeText(TripDetailsActivity.this, R.string.seat_is_reserved, Toast.LENGTH_SHORT).show();
 
                                                         }
@@ -325,7 +341,59 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
+
+    private void cancelTrip() {
+
+        databaseReference.child(Constants.USER_REF_PATH).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+
+                // Check if current user has another trip at the same time of current trip
+                assert user != null;
+                HashMap<String, Object> trips = user.getTrips();
+                if (trips.get(mTrip.getId()) != null) {
+                    trips.remove(mTrip.getId());
+                    Toast.makeText(TripDetailsActivity.this, mTrip.getId(), Toast.LENGTH_SHORT).show();
+                    databaseReference.child(Constants.USER_REF_PATH).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child("trips").setValue(trips).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+
+                            mTrip.setAvailableSeats(mTrip.getAvailableSeats() + 1);
+                            mTrip.setBookedSeats(mTrip.getBookedSeats() - 1);
+
+                            databaseReference.child(Constants.TRIP_REF_PATH)
+                                    .child(mTrip.getId())
+                                    .setValue(mTrip)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+
+                                            mAvailableSeatsTextView.setText(String.valueOf(mTrip.getAvailableSeats()));
+                                            mBookButton.setVisibility(View.VISIBLE);
+                                            mCancelButton.setVisibility(View.GONE);
+                                            Toast.makeText(TripDetailsActivity.this, "Canceled!", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    });
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(TripDetailsActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
 }
-
-
 

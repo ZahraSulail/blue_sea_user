@@ -19,7 +19,7 @@ public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.Trip
 
     private List<Trip> mTripList;
     private OnTripClickListener mTripClickListiner;
-    private HashMap<String,String> mReservedTrips;
+    private HashMap<String,Object> mReservedTrips;
 
     public TripItemsAdapter(List<Trip> tripList, OnTripClickListener tripClickListiner) {
         this.mTripList = tripList;
@@ -44,7 +44,7 @@ public class TripItemsAdapter extends RecyclerView.Adapter<TripItemsAdapter.Trip
         return mTripList.size();
     }
 
-    public void setReservedTrips(HashMap<String, String> reservedTrips) {
+    public void setReservedTrips(HashMap<String, Object> reservedTrips) {
         mReservedTrips = reservedTrips;
     }
 

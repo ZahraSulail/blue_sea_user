@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String userPhoneNo;
-    private HashMap<String, String> trips = new HashMap<>();
+    private HashMap<String, Object> trips = new HashMap<>();
 
 
     public User(String id) {
@@ -80,11 +80,11 @@ public class User implements Serializable {
         this.userPhoneNo = userPhoneNo;
     }
 
-    public void setTrips(HashMap<String, String> trips) {
+    public void setTrips(HashMap<String, Object> trips) {
         this.trips = trips;
     }
 
-    public HashMap<String, String> getTrips() {
+    public HashMap<String, Object> getTrips() {
         return trips;
     }
 }

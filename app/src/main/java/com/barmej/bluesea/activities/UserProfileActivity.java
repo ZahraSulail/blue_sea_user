@@ -2,6 +2,8 @@ package com.barmej.bluesea.activities;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView userNameTextView;
     private TextView userEmailTextView;
     private TextView userPhoneNoTextView;
+    private Button updateButton;
 
     /*
      FirebaseAuth object
@@ -55,11 +58,23 @@ public class UserProfileActivity extends AppCompatActivity {
         userNameTextView = findViewById( R.id.text_view_user_name );
         userEmailTextView = findViewById( R.id.text_view_user_email );
         userPhoneNoTextView = findViewById( R.id.text_view_user_phone );
+        updateButton = findViewById(R.id.button_update);
 
         /*
          This method implemented directly when current uuser access his/her/ profile
          */
         loadUserInformation();
+
+        /*
+        click on updateButton to move to update user profile screen
+         */
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     /*
@@ -73,9 +88,9 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue( User.class );
                 Glide.with( userPhotoImageView ).load( user.getPhoto() ).into( userPhotoImageView );
-                userNameTextView.setText( "الإسم:" + " " + user.getName() );
-                userEmailTextView.setText( "الأيميل:" + " " + user.getEmail() );
-                userPhoneNoTextView.setText( "الهاتف:" + " " + user.getUserPhoneNo() );
+                userNameTextView.setText( "" + " " + user.getName() );
+                userEmailTextView.setText( "" + " " + user.getEmail() );
+                userPhoneNoTextView.setText( "" + " " + user.getUserPhoneNo() );
             }
 
             @Override
@@ -86,6 +101,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     }
+
+
 }
 
 

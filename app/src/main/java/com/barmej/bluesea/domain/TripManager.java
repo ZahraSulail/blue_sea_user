@@ -20,13 +20,12 @@ public class TripManager {
     References of objects
      */
     private static TripManager instance;
-    private FirebaseDatabase database;
+    private final FirebaseDatabase database;
     private User user;
     private Trip trip;
     private Captain captain;
     private StatusCallBack statusCallBack;
     private ValueEventListener tripListener;
-    private FullStatus fullStatus;
 
     /*
      Constructor of TripManager class
@@ -89,7 +88,7 @@ public class TripManager {
     }
 
     /*
-    monitor trip and get snapshot from databse
+    monitor trip and get snapshot from database
      */
     public void startMonitoringTrip(String id) {
         tripListener = database.getReference(Constants.TRIP_REF_PATH).child(id).addValueEventListener(new ValueEventListener() {
@@ -125,7 +124,7 @@ public class TripManager {
     Update TripStatus ana set status of user, captain, and trip
      */
     private void updateStatusWithTrip() {
-        fullStatus = new FullStatus();
+        FullStatus fullStatus = new FullStatus();
         fullStatus.setUser(user);
         fullStatus.setCaptain(captain);
         fullStatus.setTrip(trip);
