@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private MaterialButton loginButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.edit_text_email);
         passwordEditText = findViewById(R.id.edit_text_password);
         loginButton = findViewById(R.id.button_login);
+        progressBar = findViewById(R.id.progressBar);
 
         /*
          loginButton.setOnClickListener that handle logInClicke
@@ -64,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
          */
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
+            hideForm(true);
             fetchUserProfileAndLogin(firebaseUser.getUid());
         }
     }
@@ -81,9 +85,9 @@ public class LoginActivity extends AppCompatActivity {
             passwordTextInputLayout.setError(getString(R.string.invalid_password_length));
             return;
         }
-
+        hideForm(true);
         System.out.println("Try to login");
-
+        //Signin firebase with email and password
         FirebaseAuth.getInstance()
                 .signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -95,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                             fetchUserProfileAndLogin(userId);
                         } else {
                             System.out.println("Response: Not Successful");
+                            hideForm(false);
                             Toast.makeText(LoginActivity.this, R.string.login_error, Toast.LENGTH_LONG).show();
                         }
                     }
@@ -122,10 +127,31 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 } else {
                     Toast.makeText(LoginActivity.this, R.string.no_user, Toast.LENGTH_LONG).show();
+                    hideForm(false);
                 }
 
             }
         });
+    }
+
+    private void hideForm(boolean hide){
+        if(hide){
+            progressBar.setVisibility(View.VISIBLE);
+            emailTextInputLayout.setVisibility(View.GONE);
+            emailEditText.setVisibility(View.GONE);
+            passwordTextInputLayout.setVisibility(View.GONE);
+            passwordEditText.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
+
+        }else{
+            progressBar.setVisibility(View.GONE);
+            emailTextInputLayout.setVisibility(View.VISIBLE);
+            emailEditText.setVisibility(View.VISIBLE);
+            passwordTextInputLayout.setVisibility(View.VISIBLE);
+            passwordEditText.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
+
+        }
     }
 
 }

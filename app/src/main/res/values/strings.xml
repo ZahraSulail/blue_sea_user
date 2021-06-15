@@ -56,5 +56,6 @@
     <string name="no_user">لم يتم العثور على مستخد</string>
     <string name="cancel">الغاء الحجز</string>
     <string name="update_profile">تحديث</string>
+    <string name="arrived">تم الوصول للوجهة</string>
 
 </resources>

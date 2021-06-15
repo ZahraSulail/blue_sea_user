@@ -61,9 +61,6 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
         /*
          Find views by ids and assigned them to variables
          */
-        /*
-         Define required variables
-         */
         CardView mCardView = findViewById(R.id.card_view);
         mDateTextView = findViewById(R.id.det_text_view_date);
         mPositionTextView = findViewById(R.id.det_text_view_position);
@@ -122,7 +119,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnMapReady
                     mCancelButton.setVisibility(View.GONE);
                     mBookButton.setVisibility(View.GONE);
                     tripStatusTextView.setVisibility(View.VISIBLE);
-                    tripStatusTextView.setText("Arrived");
+                    tripStatusTextView.setText(getText(R.string.arrived));
                 } else {
                     // Show the reserve button
                     Log.d(TAG, "onCreate: AVAILABLE");

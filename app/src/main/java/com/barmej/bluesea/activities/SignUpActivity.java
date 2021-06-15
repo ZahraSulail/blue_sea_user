@@ -10,6 +10,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -61,6 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText userPhoneNoInputEditText;
     private MaterialButton createAccountButton;
     private MaterialButton haveAccountButton;
+    private ProgressBar progressBar;
 
     /*
      FirebaseAuth object used to allow user access firebase
@@ -105,6 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
         haveAccountButton = findViewById(R.id.button_have_account);
         userPhoneNoTextInputLayout = findViewById(R.id.text_input_user_phone_no);
         userPhoneNoInputEditText = findViewById(R.id.edit_text_user_phone_no);
+        progressBar = findViewById(R.id.sign_up_progressBar);
 
         /*
          Get an instance of FirebaseAuth
@@ -170,9 +173,11 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
                 if (mUserPhotoUri != null) {
+                    hideForm(true);
                     createAccount();
 
                 } else {
+                    hideForm(false);
                     Toast.makeText(SignUpActivity.this, R.string.image_is_required, Toast.LENGTH_SHORT).show();
                 }
 
@@ -201,8 +206,10 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    hideForm(true);
                     sendUserInformationToFirebase();
                 } else {
+                    hideForm(false);
                     Toast.makeText(SignUpActivity.this, R.string.error_user_cannot_signUp, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "onComplete: Failed=" + task.getException().getMessage());
                 }
@@ -324,4 +331,37 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
     }
+
+    private void hideForm(boolean hide){
+        if(hide){
+            progressBar.setVisibility(View.VISIBLE);
+            emailTextInputLayout.setVisibility(View.GONE);
+            emailTextInputEditText.setVisibility(View.GONE);
+            passwordTextInputLayout.setVisibility(View.GONE);
+            passwordTextInputEditText.setVisibility(View.GONE);
+            userNameTextInputLayout.setVisibility(View.GONE);
+            userNameTextInputEditText.setVisibility(View.GONE);
+            userPhoneNoTextInputLayout.setVisibility(View.GONE);
+            userPhoneNoInputEditText.setVisibility(View.VISIBLE);
+            createAccountButton.setVisibility(View.GONE);
+            haveAccountButton.setVisibility(View.GONE);
+            userPhotoImageView.setVisibility(View.GONE);
+
+        }else{
+            progressBar.setVisibility(View.GONE);
+            emailTextInputLayout.setVisibility(View.VISIBLE);
+            emailTextInputEditText.setVisibility(View.VISIBLE);
+            passwordTextInputLayout.setVisibility(View.VISIBLE);
+            passwordTextInputEditText.setVisibility(View.VISIBLE);
+            createAccountButton.setVisibility(View.VISIBLE);
+            haveAccountButton.setVisibility(View.VISIBLE);
+            userNameTextInputLayout.setVisibility(View.VISIBLE);
+            userNameTextInputEditText.setVisibility(View.VISIBLE);
+            userPhoneNoTextInputLayout.setVisibility(View.VISIBLE);
+            userPhoneNoInputEditText.setVisibility(View.VISIBLE);
+            userPhotoImageView.setVisibility(View.VISIBLE);
+
+        }
+    }
+
 }
