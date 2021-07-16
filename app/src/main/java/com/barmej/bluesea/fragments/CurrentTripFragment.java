@@ -138,7 +138,7 @@ public class CurrentTripFragment extends Fragment implements OnMapReadyCallback 
             builder.setPositiveButton( R.string.ok, null );
             builder.show();
         }
-        tripStatusTextView.setText( tripStatus );
+        tripStatusTextView.setText( tripStatusText );
         setStartPointMarker(new LatLng(trip.getStartLat(), trip.getStartLng()));
         setDestinationMarker(new LatLng(trip.getDestinationLat(), trip.getDestinationLng()));
         setShipMarker(new LatLng(trip.getCurrentLat(), trip.getCurrentLng()));

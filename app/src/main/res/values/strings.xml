@@ -31,7 +31,7 @@
     <string name="current_trip">Current Trip</string>
     <string name="trip_list">Trip List</string>
     <string name="photo_Selection_error">خطآ في تحميل الصورة</string>
-    <string name="trip_going_to_destination">الرحلة متحها لميناء الوجهة</string>
+    <string name="trip_going_to_destination">الرحلة متجهة لميناء الوجهة</string>
     <string name="trip_arrived">الرحلة وصلت الى وجهتها</string>
     <string name="location_permission_needed">صلاحية الدخول للموقع مطلوبة</string>
     <string name="no_available_seats_to_book">لا يوجد مقاعد متوفرة للحجز</string>
